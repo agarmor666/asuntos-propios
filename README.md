@@ -126,54 +126,141 @@
             cursor: not-allowed;
         }
         
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+        .refresh-btn {
+            background: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
         }
         
-        .day-card {
-            background: white;
-            border: 2px solid #e0e0e0;
+        .legend {
+            background: #f8f9fa;
             border-radius: 10px;
-            padding: 15px;
-            transition: all 0.3s;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
         }
         
-        .day-card.festivo {
-            background: #ffebee;
-            border-color: #ef5350;
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        .day-card.ocupado {
-            background: #fff3e0;
-            border-color: #ff9800;
+        .legend-box {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            border: 2px solid;
         }
         
-        .day-card.completo {
+        .legend-box.festivo {
+            background: #e1bee7;
+            border-color: #9c27b0;
+        }
+        
+        .legend-box.ocupado {
+            background: #c8e6c9;
+            border-color: #4caf50;
+        }
+        
+        .legend-box.completo {
             background: #ffcdd2;
             border-color: #f44336;
         }
         
-        .day-date {
+        .legend-box.disponible {
+            background: white;
+            border-color: #e0e0e0;
+        }
+        
+        .calendar-year {
+            margin-bottom: 30px;
+        }
+        
+        .months-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .month-container {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .month-header {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: center;
             font-weight: 700;
             font-size: 18px;
-            color: #333;
-            margin-bottom: 10px;
         }
         
-        .day-info {
-            font-size: 13px;
-            color: #666;
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
         }
         
-        .maestro-item {
-            background: #e3f2fd;
-            padding: 5px 10px;
-            border-radius: 5px;
-            margin: 5px 0;
+        .calendar-table th {
+            background: #f8f9fa;
+            padding: 10px 5px;
             font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .calendar-table td {
+            padding: 8px 5px;
+            border: 1px solid #e0e0e0;
+            vertical-align: top;
+            height: 70px;
+            font-size: 11px;
+        }
+        
+        .calendar-table td.empty {
+            background: #f5f5f5;
+        }
+        
+        .calendar-table td.weekend {
+            background: #f5f5f5;
+        }
+        
+        .calendar-table td.festivo {
+            background: #e1bee7;
+        }
+        
+        .calendar-table td.ocupado {
+            background: #c8e6c9;
+        }
+        
+        .calendar-table td.completo {
+            background: #ffcdd2;
+        }
+        
+        .day-number {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .day-maestro {
+            font-size: 9px;
+            background: #2196f3;
+            color: white;
+            padding: 2px 4px;
+            border-radius: 3px;
+            margin: 2px 0;
+            display: block;
         }
         
         .stats-grid {
@@ -184,10 +271,20 @@
         }
         
         .stat-card {
-            background: #f8f9fa;
+            background: #c8e6c9;
             border-radius: 10px;
             padding: 20px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .stat-card.one-day {
+            background: #fff9c4;
+            border-left-color: #fbc02d;
+        }
+        
+        .stat-card.two-days {
+            background: #ffcdd2;
+            border-left-color: #f44336;
         }
         
         .stat-name {
@@ -199,11 +296,6 @@
         .stat-days {
             color: #666;
             font-size: 14px;
-        }
-        
-        .stat-complete {
-            background: #e8f5e9;
-            border-left-color: #4caf50;
         }
         
         .alert {
@@ -222,27 +314,10 @@
             font-size: 18px;
         }
         
-        .refresh-btn {
-            background: #4caf50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-        
-        .month-section {
-            margin-bottom: 40px;
-        }
-        
-        .month-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #667eea;
+        @media (max-width: 1200px) {
+            .months-row {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -286,6 +361,26 @@
             
             <div id="calendario" class="tab-content">
                 <button class="refresh-btn" onclick="loadData()">Actualizar Datos</button>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-box disponible"></div>
+                        <span>Disponible</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box ocupado"></div>
+                        <span>1 maestro (disponible)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box completo"></div>
+                        <span>2 maestros (COMPLETO)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box festivo"></div>
+                        <span>Festivo / No lectivo</span>
+                    </div>
+                </div>
+                
                 <div id="loadingCalendar" class="loading">Cargando calendario...</div>
                 <div id="calendarContent"></div>
             </div>
@@ -340,24 +435,14 @@
         ];
         
         const festivos = [
-            // Octubre 2025
             '2025-10-13',
-            // Noviembre 2025
             '2025-11-01', '2025-11-03',
-            // Diciembre 2025 (del 23 al 6 enero - dia no lectivo + vacaciones Navidad)
             '2025-12-06', '2025-12-08', '2025-12-23', '2025-12-24', '2025-12-25',
             '2025-12-26', '2025-12-27', '2025-12-28', '2025-12-29', '2025-12-30', '2025-12-31',
-            // Enero 2026 (vacaciones hasta el 6, el 7 es lectivo)
             '2026-01-01', '2026-01-02', '2026-01-03', '2026-01-04', '2026-01-05', '2026-01-06',
-            // Febrero 2026
             '2026-02-27', '2026-02-28',
-            // Marzo 2026
-            '2026-03-02',
-            // Semana Santa 2026 (29 marzo - 5 abril inclusive)
             '2026-03-29', '2026-03-30', '2026-03-31', '2026-04-01', '2026-04-02', '2026-04-03', '2026-04-04', '2026-04-05',
-            // Mayo 2026
             '2026-05-01', '2026-05-04',
-            // Junio 2026 (12 festivo, del 23 al 30 fin de curso)
             '2026-06-12', '2026-06-23', '2026-06-24', '2026-06-25', '2026-06-26', '2026-06-27', '2026-06-28', '2026-06-29', '2026-06-30'
         ];
         
@@ -422,7 +507,7 @@
             
             for (const p of peticionesIniciales) {
                 try {
-                    const response = await fetch(API_URL, {
+                    await fetch(API_URL, {
                         method: 'POST',
                         redirect: 'follow',
                         headers: { 
@@ -438,15 +523,11 @@
                     await new Promise(resolve => setTimeout(resolve, 500));
                     
                 } catch (error) {
-                    console.log('Peticion guardada (error esperado con no-cors)');
+                    console.log('Peticion guardada');
                 }
             }
             
-            console.log('Peticiones iniciales cargadas, esperando 3 segundos...');
-            setTimeout(() => {
-                console.log('Recargando datos...');
-                loadData();
-            }, 3000);
+            setTimeout(() => loadData(), 3000);
         }
         
         function renderCalendar() {
@@ -457,90 +538,118 @@
             container.innerHTML = '';
             
             const meses = [
-                { nombre: 'Septiembre 2025', inicio: new Date(2025, 8, 1), fin: new Date(2025, 8, 30) },
-                { nombre: 'Octubre 2025', inicio: new Date(2025, 9, 1), fin: new Date(2025, 9, 31) },
-                { nombre: 'Noviembre 2025', inicio: new Date(2025, 10, 1), fin: new Date(2025, 10, 30) },
-                { nombre: 'Diciembre 2025', inicio: new Date(2025, 11, 1), fin: new Date(2025, 11, 31) },
-                { nombre: 'Enero 2026', inicio: new Date(2026, 0, 1), fin: new Date(2026, 0, 31) },
-                { nombre: 'Febrero 2026', inicio: new Date(2026, 1, 1), fin: new Date(2026, 1, 28) },
-                { nombre: 'Marzo 2026', inicio: new Date(2026, 2, 1), fin: new Date(2026, 2, 31) },
-                { nombre: 'Abril 2026', inicio: new Date(2026, 3, 1), fin: new Date(2026, 3, 30) },
-                { nombre: 'Mayo 2026', inicio: new Date(2026, 4, 1), fin: new Date(2026, 4, 31) },
-                { nombre: 'Junio 2026', inicio: new Date(2026, 5, 1), fin: new Date(2026, 5, 30) }
+                { nombre: 'SEPTIEMBRE-2025', year: 2025, month: 8 },
+                { nombre: 'OCTUBRE-2025', year: 2025, month: 9 },
+                { nombre: 'NOVIEMBRE-2025', year: 2025, month: 10 },
+                { nombre: 'DICIEMBRE-2025', year: 2025, month: 11 },
+                { nombre: 'ENERO-2026', year: 2026, month: 0 },
+                { nombre: 'FEBRERO-2026', year: 2026, month: 1 },
+                { nombre: 'MARZO-2026', year: 2026, month: 2 },
+                { nombre: 'ABRIL-2026', year: 2026, month: 3 },
+                { nombre: 'MAYO-2026', year: 2026, month: 4 },
+                { nombre: 'JUNIO-2026', year: 2026, month: 5 }
             ];
             
-            meses.forEach(mes => {
-                const section = document.createElement('div');
-                section.className = 'month-section';
+            for (let i = 0; i < meses.length; i += 2) {
+                const row = document.createElement('div');
+                row.className = 'months-row';
                 
-                const title = document.createElement('div');
-                title.className = 'month-title';
-                title.textContent = mes.nombre;
-                section.appendChild(title);
-                
-                const grid = document.createElement('div');
-                grid.className = 'calendar-grid';
-                
-                let current = new Date(mes.inicio);
-                while (current <= mes.fin) {
-                    const dateStr = current.toISOString().split('T')[0];
-                    const day = current.getDay();
-                    
-                    if (day !== 0 && day !== 6) {
-                        const card = document.createElement('div');
-                        card.className = 'day-card';
-                        
-                        const esFestivo = festivos.includes(dateStr);
-                        const peticionesDelDia = peticiones.filter(p => p.fecha === dateStr);
-                        
-                        if (esFestivo) {
-                            card.classList.add('festivo');
-                        } else if (peticionesDelDia.length >= 2) {
-                            card.classList.add('completo');
-                        } else if (peticionesDelDia.length > 0) {
-                            card.classList.add('ocupado');
-                        }
-                        
-                        const dateDiv = document.createElement('div');
-                        dateDiv.className = 'day-date';
-                        dateDiv.textContent = current.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
-                        card.appendChild(dateDiv);
-                        
-                        const info = document.createElement('div');
-                        info.className = 'day-info';
-                        
-                        if (esFestivo) {
-                            info.innerHTML = '<strong>FESTIVO</strong>';
-                        } else if (peticionesDelDia.length >= 2) {
-                            info.innerHTML = '<strong>COMPLETO (2/2)</strong>';
-                            peticionesDelDia.forEach(p => {
-                                const item = document.createElement('div');
-                                item.className = 'maestro-item';
-                                item.textContent = p.maestro.split(',')[0];
-                                info.appendChild(item);
-                            });
-                        } else if (peticionesDelDia.length > 0) {
-                            info.innerHTML = `<strong>Ocupado (${peticionesDelDia.length}/2)</strong>`;
-                            peticionesDelDia.forEach(p => {
-                                const item = document.createElement('div');
-                                item.className = 'maestro-item';
-                                item.textContent = p.maestro.split(',')[0];
-                                info.appendChild(item);
-                            });
-                        } else {
-                            info.textContent = 'Disponible';
-                        }
-                        
-                        card.appendChild(info);
-                        grid.appendChild(card);
-                    }
-                    
-                    current.setDate(current.getDate() + 1);
+                row.appendChild(createMonthTable(meses[i]));
+                if (i + 1 < meses.length) {
+                    row.appendChild(createMonthTable(meses[i + 1]));
                 }
                 
-                section.appendChild(grid);
-                container.appendChild(section);
+                container.appendChild(row);
+            }
+        }
+        
+        function createMonthTable(mesInfo) {
+            const container = document.createElement('div');
+            container.className = 'month-container';
+            
+            const header = document.createElement('div');
+            header.className = 'month-header';
+            header.textContent = mesInfo.nombre;
+            container.appendChild(header);
+            
+            const table = document.createElement('table');
+            table.className = 'calendar-table';
+            
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            ['L', 'M', 'Mi', 'J', 'V', 'S', 'D'].forEach(dia => {
+                const th = document.createElement('th');
+                th.textContent = dia;
+                headerRow.appendChild(th);
             });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            const tbody = document.createElement('tbody');
+            
+            const firstDay = new Date(mesInfo.year, mesInfo.month, 1);
+            const lastDay = new Date(mesInfo.year, mesInfo.month + 1, 0);
+            
+            let dayOfWeek = firstDay.getDay();
+            dayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+            
+            let currentDay = 1;
+            let finished = false;
+            
+            while (!finished) {
+                const row = document.createElement('tr');
+                
+                for (let i = 0; i < 7; i++) {
+                    const cell = document.createElement('td');
+                    
+                    if ((currentDay === 1 && i < dayOfWeek) || currentDay > lastDay.getDate()) {
+                        cell.classList.add('empty');
+                        row.appendChild(cell);
+                        if (currentDay > lastDay.getDate()) finished = true;
+                        continue;
+                    }
+                    
+                    const date = new Date(mesInfo.year, mesInfo.month, currentDay);
+                    const dateStr = date.toISOString().split('T')[0];
+                    const dayNum = date.getDay();
+                    
+                    const dayDiv = document.createElement('div');
+                    dayDiv.className = 'day-number';
+                    dayDiv.textContent = currentDay;
+                    cell.appendChild(dayDiv);
+                    
+                    if (dayNum === 0 || dayNum === 6) {
+                        cell.classList.add('weekend');
+                    } else if (festivos.includes(dateStr)) {
+                        cell.classList.add('festivo');
+                    } else {
+                        const peticionesDia = peticiones.filter(p => p.fecha === dateStr);
+                        
+                        if (peticionesDia.length >= 2) {
+                            cell.classList.add('completo');
+                        } else if (peticionesDia.length === 1) {
+                            cell.classList.add('ocupado');
+                        }
+                        
+                        peticionesDia.forEach(p => {
+                            const maestroSpan = document.createElement('span');
+                            maestroSpan.className = 'day-maestro';
+                            maestroSpan.textContent = p.maestro.split(',')[0].substring(0, 10);
+                            cell.appendChild(maestroSpan);
+                        });
+                    }
+                    
+                    row.appendChild(cell);
+                    currentDay++;
+                }
+                
+                tbody.appendChild(row);
+            }
+            
+            table.appendChild(tbody);
+            container.appendChild(table);
+            
+            return container;
         }
         
         function renderMaestros() {
@@ -558,8 +667,10 @@
                 
                 const card = document.createElement('div');
                 card.className = 'stat-card';
-                if (peticionesMaestro.length >= 2) {
-                    card.classList.add('stat-complete');
+                if (peticionesMaestro.length === 1) {
+                    card.classList.add('one-day');
+                } else if (peticionesMaestro.length >= 2) {
+                    card.classList.add('two-days');
                 }
                 
                 const name = document.createElement('div');
@@ -598,7 +709,6 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Verificando...';
             
-            // Validaciones
             if (festivos.includes(fecha)) {
                 alertsDiv.innerHTML = '<div class="alert">ERROR: No se pueden solicitar dias festivos</div>';
                 submitBtn.disabled = false;
@@ -629,9 +739,8 @@
                 return;
             }
             
-            // Guardar
             try {
-                const response = await fetch(API_URL, {
+                await fetch(API_URL, {
                     method: 'POST',
                     redirect: 'follow',
                     headers: { 
@@ -656,7 +765,7 @@
                 }, 2000);
                 
             } catch (error) {
-                console.log('Peticion enviada (error esperado)');
+                console.log('Peticion enviada');
                 alertsDiv.innerHTML = '<div class="alert" style="background: #d4edda; border-color: #c3e6cb; color: #155724;">Peticion registrada correctamente. Actualizando...</div>';
                 
                 this.reset();
@@ -672,21 +781,20 @@
         
         initMaestrosSelect();
         
-        // Cargar datos o peticiones iniciales
         setTimeout(() => {
             fetch(API_URL + '?action=get&t=' + new Date().getTime())
                 .then(response => response.json())
                 .then(result => {
                     if (result.success && result.data && result.data.length > 0) {
-                        console.log('Datos encontrados en Sheet, cargando...');
+                        console.log('Datos encontrados, cargando...');
                         loadData();
                     } else {
-                        console.log('No hay datos, cargando peticiones iniciales...');
+                        console.log('Cargando peticiones iniciales...');
                         cargarPeticionesIniciales();
                     }
                 })
                 .catch((error) => {
-                    console.log('Error al verificar datos, cargando peticiones iniciales...', error);
+                    console.log('Cargando peticiones iniciales...', error);
                     cargarPeticionesIniciales();
                 });
         }, 1000);
