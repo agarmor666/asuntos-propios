@@ -504,7 +504,7 @@
                         fecha: typeof p.fecha === 'string' ? p.fecha.split('T')[0] : p.fecha,
                         rowIndex: p.rowIndex
                     }));
-                    console.log('Peticiones cargadas:', peticiones);
+                    console.log('Peticiones cargadas:', peticiones.length);
                 } else {
                     peticiones = [];
                 }
@@ -630,8 +630,6 @@
                     const dateStr = date.toISOString().split('T')[0];
                     const dayNum = date.getDay();
                     
-                    console.log('Revisando fecha:', dateStr, 'Peticiones encontradas:', peticiones.filter(p => p.fecha === dateStr).length);
-                    
                     const dayDiv = document.createElement('div');
                     dayDiv.className = 'day-number';
                     dayDiv.textContent = currentDay;
@@ -701,10 +699,6 @@
                 days.className = 'stat-days';
                 days.innerHTML = `<strong>${peticionesMaestro.length}/2 dias usados</strong>`;
                 
-                const stat-days {
-            color: #666;
-            font-size: 14px;
-        }
                 if (peticionesMaestro.length > 0) {
                     days.innerHTML += '<br>';
                     peticionesMaestro.forEach(p => {
