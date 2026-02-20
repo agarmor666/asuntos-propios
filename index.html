@@ -477,8 +477,20 @@
             event.target.classList.add('active');
             document.getElementById(tabName).classList.add('active');
             
-            if (tabName === 'calendario') renderCalendar();
-            if (tabName === 'maestros') renderMaestros();
+            if (tabName === 'calendario') {
+                if (peticiones.length === 0) {
+                    loadData();
+                } else {
+                    renderCalendar();
+                }
+            }
+            if (tabName === 'maestros') {
+                if (peticiones.length === 0) {
+                    loadData();
+                } else {
+                    renderMaestros();
+                }
+            }
         }
         
         async function loadData() {
@@ -487,7 +499,12 @@
                 const result = await response.json();
                 
                 if (result.success && result.data) {
-                    peticiones = result.data;
+                    peticiones = result.data.map(p => ({
+                        maestro: p.maestro,
+                        fecha: typeof p.fecha === 'string' ? p.fecha.split('T')[0] : p.fecha,
+                        rowIndex: p.rowIndex
+                    }));
+                    console.log('Peticiones cargadas:', peticiones);
                 } else {
                     peticiones = [];
                 }
@@ -612,6 +629,8 @@
                     const date = new Date(mesInfo.year, mesInfo.month, currentDay);
                     const dateStr = date.toISOString().split('T')[0];
                     const dayNum = date.getDay();
+                    
+                    console.log('Revisando fecha:', dateStr, 'Peticiones encontradas:', peticiones.filter(p => p.fecha === dateStr).length);
                     
                     const dayDiv = document.createElement('div');
                     dayDiv.className = 'day-number';
