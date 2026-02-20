@@ -478,18 +478,14 @@
             document.getElementById(tabName).classList.add('active');
             
             if (tabName === 'calendario') {
-                if (peticiones.length === 0) {
-                    loadData();
-                } else {
-                    renderCalendar();
-                }
+                document.getElementById('loadingCalendar').style.display = 'block';
+                loadData().then(() => {
+                    console.log('Renderizando calendario con', peticiones.length, 'peticiones');
+                });
             }
             if (tabName === 'maestros') {
-                if (peticiones.length === 0) {
-                    loadData();
-                } else {
-                    renderMaestros();
-                }
+                document.getElementById('loadingMaestros').style.display = 'block';
+                loadData();
             }
         }
         
