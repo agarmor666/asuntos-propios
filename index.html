@@ -701,10 +701,15 @@
                 days.className = 'stat-days';
                 days.innerHTML = `<strong>${peticionesMaestro.length}/2 dias usados</strong>`;
                 
+                const stat-days {
+            color: #666;
+            font-size: 14px;
+        }
                 if (peticionesMaestro.length > 0) {
                     days.innerHTML += '<br>';
                     peticionesMaestro.forEach(p => {
-                        const fecha = new Date(p.fecha + 'T00:00:00');
+                        const [year, month, day] = p.fecha.split('-');
+                        const fecha = new Date(year, month - 1, day);
                         days.innerHTML += `<br>- ${fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })}`;
                     });
                 }
