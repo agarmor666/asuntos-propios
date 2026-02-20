@@ -622,8 +622,13 @@
                         continue;
                     }
                     
+                    // Crear fecha en formato local sin problemas de zona horaria
+                    const year = mesInfo.year;
+                    const month = String(mesInfo.month + 1).padStart(2, '0');
+                    const day = String(currentDay).padStart(2, '0');
+                    const dateStr = `${year}-${month}-${day}`;
+                    
                     const date = new Date(mesInfo.year, mesInfo.month, currentDay);
-                    const dateStr = date.toISOString().split('T')[0];
                     const dayNum = date.getDay();
                     
                     const dayDiv = document.createElement('div');
