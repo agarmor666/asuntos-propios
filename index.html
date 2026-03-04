@@ -34,6 +34,17 @@
             text-align: center;
         }
         
+        .header-info {
+            font-size: 0.95em;
+            opacity: 0.95;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .header-info span {
+            margin: 0 15px;
+        }
+        
         .header h1 {
             font-size: 2em;
             margin-bottom: 10px;
@@ -82,6 +93,58 @@
         
         .tab-content.active {
             display: block;
+        }
+        
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .password-overlay.active {
+            display: flex;
+        }
+        
+        .password-modal {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .password-modal h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .password-modal input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .password-modal .btn {
+            width: 100%;
+        }
+        
+        .password-error {
+            color: #f44336;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
         }
         
         .form-section {
@@ -324,6 +387,9 @@
 <body>
     <div class="container">
         <div class="header">
+            <div class="header-info">
+                CEIP BARTOLOMÉ FLORES<span>•</span>MOJÁCAR - ALMERÍA<span>•</span>04638<span>•</span>04003160@juntadeandalucia.es
+            </div>
             <h1>Gestion de Asuntos Propios Retribuidos</h1>
             <p>Curso Academico 2025-2026</p>
             <p>Maximo: 2 dias por maestro/a | 2 maestros/as por dia</p>
@@ -392,9 +458,25 @@
             </div>
         </div>
     </div>
+    
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="password-modal">
+            <h2>Acceso Restringido</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #666;">
+                Introduce la contraseña para acceder
+            </p>
+            <div class="password-error" id="passwordError">Contraseña incorrecta</div>
+            <input type="password" id="passwordInput" placeholder="Contraseña">
+            <button class="btn" onclick="checkPassword()">Acceder</button>
+        </div>
+    </div>
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbxrYGXIpAdwn-6LjN8Ka9dp9tiNP9_UgFuMw8ZBeuS5C7-hGyqpvsAOdPj7L5Rxzfc6/exec';
+        const ADMIN_PASSWORD = 'bartolomeflores';
+        
+        let isAuthenticated = false;
+        let requestedTab = null;
         
         const maestros = [
             'Alconchel Vazquez, Carlos',
@@ -472,6 +554,15 @@
         }
         
         function showTab(tabName) {
+            // Si intenta acceder a calendario o maestros sin autenticación
+            if ((tabName === 'calendario' || tabName === 'maestros') && !isAuthenticated) {
+                requestedTab = tabName;
+                document.getElementById('passwordOverlay').classList.add('active');
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordError').style.display = 'none';
+                return;
+            }
+            
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
@@ -489,6 +580,50 @@
                 loadData();
             }
         }
+        
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                isAuthenticated = true;
+                document.getElementById('passwordOverlay').classList.remove('active');
+                
+                // Activar la pestaña solicitada
+                if (requestedTab) {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    const tabButton = Array.from(document.querySelectorAll('.tab')).find(
+                        t => t.textContent.toLowerCase().includes(requestedTab === 'calendario' ? 'calendario' : 'estado')
+                    );
+                    if (tabButton) tabButton.classList.add('active');
+                    
+                    document.getElementById(requestedTab).classList.add('active');
+                    
+                    if (requestedTab === 'calendario') {
+                        document.getElementById('loadingCalendar').style.display = 'block';
+                        loadData();
+                    } else if (requestedTab === 'maestros') {
+                        document.getElementById('loadingMaestros').style.display = 'block';
+                        loadData();
+                    }
+                }
+            } else {
+                document.getElementById('passwordError').style.display = 'block';
+            }
+        }
+        
+        // Permitir Enter en el campo de contraseña
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('passwordInput');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        checkPassword();
+                    }
+                });
+            }
+        });
         
         async function loadData() {
             try {
@@ -769,11 +904,12 @@
                     body: JSON.stringify({
                         action: 'set',
                         maestro: maestro,
-                        fecha: fecha
+                        fecha: fecha,
+                        sendEmail: true
                     })
                 });
                 
-                alertsDiv.innerHTML = '<div class="alert" style="background: #d4edda; border-color: #c3e6cb; color: #155724;">Peticion registrada correctamente. Actualizando...</div>';
+                alertsDiv.innerHTML = '<div class="alert" style="background: #d4edda; border-color: #c3e6cb; color: #155724;">Peticion registrada correctamente. Se ha enviado una notificacion por email. Actualizando...</div>';
                 
                 this.reset();
                 
